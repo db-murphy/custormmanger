@@ -13,7 +13,7 @@ MyApp.run(function ($ionicPlatform, $rootScope, $state, $ionicLoading, CommonFn,
     };
 
     //根据url存储一些常量
-    //setVariables.setVariablesData();
+    setVariables.setVariablesData();
 
     //获取code表
     dataInitRequest.getAllCodeMsg();   
