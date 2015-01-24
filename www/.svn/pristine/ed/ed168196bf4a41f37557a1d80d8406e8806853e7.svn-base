@@ -1,0 +1,1169 @@
+var AppServices = angular.module('starter.services', []);
+
+//所有controller公用的常量
+AppServices.factory('Variables', ['CommonFn', function (CommonFn) {
+	return {
+        platform          : 'pad',
+        appId   		  : '10002',//客户管理的id
+        recommend_appId   : '10003',//建议书id
+        recommend         : '',
+        insurancerId      : '',//投保人id
+        dataBaseName      : "esales.sqlite",
+        occupationBaseName: "t_code.sqlite",
+        agentCode         : '',
+        translateDataArr  : [
+        	{
+	        	codeType: 'nationality',
+	        	beTranslatedKey: 'NATIONALITY'
+	        },
+	        {
+	        	codeType: 'customertype',
+	        	beTranslatedKey: 'TYPE'
+	        },
+	        {
+        		beTranslatedKey: 'SOURCE',
+        		codeType: 'customersource'
+        	},
+        	{
+        		beTranslatedKey: 'MARRI_STATUS',
+        		codeType: 'marriage'
+        	},
+        	{
+        		beTranslatedKey: 'EDUCATION',
+        		codeType: 'degree'
+        	},
+        	{
+        		beTranslatedKey: 'IDTYPE',
+        		codeType: 'idtype'
+        	},
+        	{
+        		beTranslatedKey: 'NATIVE_PLACE',
+        		codeType: 'nativeplace'
+        	},
+        	{
+        		beTranslatedKey: 'INCOME_WAY',
+        		codeType: 'incomeway'
+        	},
+        	{
+        		beTranslatedKey: 'ACCOUNT_TENDENCY',
+        		codeType: 'accounttendency'
+        	},
+        	{
+        		beTranslatedKey: 'SEX',
+        		codeType: 'sex'
+        	}
+        ]
+    }
+}]);
+
+AppServices.factory('dataInit', [function () {
+	var dataJson = {
+		allCode: {}
+	};
+	return dataJson;
+}]);
+
+AppServices.factory('setVariables', ['Variables', 'CommonFn', function (Variables, CommonFn) {
+
+	function setVariablesDataFn () {
+		Variables.appId              = CommonFn.getQueryStringByName("proid");
+		Variables.platform           = CommonFn.getQueryStringByName("pctype");
+		Variables.recommend          = CommonFn.getQueryStringByName("recommend");
+		Variables.dataBaseName       = "promodel/"+Variables.appId+"/www/db/esales.sqlite";
+		Variables.occupationBaseName = "promodel/"+Variables.appId+"/www/db/t_code.sqlite";
+		Variables.insurancerId       = CommonFn.getQueryStringByName("applicant_id");
+		Variables.agentCode          = CommonFn.getQueryStringByName("agentCode");
+	};
+
+	return {
+		setVariablesData: function () {
+			setVariablesDataFn();
+		}
+	}
+}]);
+
+AppServices.factory('dataInitRequest', ['Variables', 'dataInit', function (Variables, dataInit) {
+
+	function getAllCodeMsgFn () {
+		getAllCodeMsg(function (arrData) {
+			for(var i=0; i<arrData.length; i++){
+				var codeType = arrData[i].CODE_TYPE;
+
+				if(!(codeType in dataInit.allCode)){
+					dataInit.allCode[codeType] = {
+						codeMap: [],
+						codeName: []
+					};
+				};
+
+				dataInit.allCode[codeType].codeMap.push(arrData[i]);
+				dataInit.allCode[codeType].codeName.push(arrData[i].CODE_NAME);
+			};
+		});
+	};
+
+	//获取所有的code表
+	function getAllCodeMsg (fn) {
+		queryAllTableData({
+			"databaseName": Variables.occupationBaseName,
+	        "tableName": "T_CODE"
+		},function (CallBackData) {
+			fn && fn(CallBackData);
+		},function(){
+			alert('获取code失败');
+		});
+	};
+
+	return {
+		getAllCodeMsg: getAllCodeMsgFn
+	}
+}]);
+
+AppServices.factory('CommonFn', ['$rootScope', function ($rootScope) {
+	var hideBarFn = function () {
+		$rootScope.commonModule.hideRightViewTopBar = true;
+	};
+
+	var showBarFn = function () {
+		$rootScope.commonModule.hideRightViewTopBar = false;
+	};
+
+	//从一个数组中查找出一个元素
+	function findIndex (arr, n) {
+		if(!angular.isArray(arr)){
+			return null;
+		};
+		for(var i=0; i<arr.length; i++){
+			if(arr[i] === n){
+				return i;
+			};
+		};
+
+		return null;
+	};
+
+	function pushToViewCtrl (jsonKey) {
+		pushToViewController(jsonKey, function (){
+		  console.log("创建建议书跳转成功！");
+		},function (){
+			alert('shshs');
+		  console.log("跳转失败！")
+		});
+	};
+
+	function closeWebViewFn (arg) {
+		//alert(JSON.stringify(arg, null, 4));
+		closeWebView(arg,function (){
+		  console.log('客户选择成功！');
+		},function (){
+		  console.log('客户选择失败！');
+		}); 
+	};
+
+	function getQueryStringByName(name){
+		var result = location.search.match(new RegExp("[\?\&]" + name+ "=([^\&]+)","i"));
+		if(result == null || result.length < 1){
+			return "";
+		}
+		return result[1];
+	}
+
+	//根据身份证算年龄
+	var getUserAge = function (idCard) {
+		var birthday = "";
+		
+		if(idCard != null && idCard != ""){
+			if(idCard.length == 15){
+				birthday = "19"+idCard.substr(6,6);
+			} else if(idCard.length == 18){
+				birthday = idCard.substr(6,8);
+			}
+		
+			birthday = birthday.replace(/(.{4})(.{2})/,"$1-$2-");
+		}
+		
+		var myDate = new Date(); 
+		var month = myDate.getMonth() + 1; 
+		var day = myDate.getDate(); 
+		var age = myDate.getFullYear() - birthday.substring(0, 4) - 1; 
+		if ((birthday.substring(4, 6) < month || birthday.substring(4, 6) == month) && birthday.substring(6, 8) <= day) { 
+			age++; 
+		};
+		var isEffective = false;
+		if(age > 46){ //国家规定四十六周岁以上发长期有效身份证
+			isEffective = true;
+		};
+
+		return {
+			"age" 		 : age,
+			"birthday"   : birthday,
+			"isEffective": isEffective
+		};
+	};
+
+	//城市联动
+	var adressSelect = function (module, allProvince, scope, dsy, provinceKey, cityKey, adressType) {
+		var groupCity = null,
+	        groupCounty = null,
+	        groupCityKey;
+
+	    scope.$watch(module + '.data.' + provinceKey, function () {
+	      var provinceNow = scope[module].data[provinceKey];
+	      
+	      if(provinceNow){
+	        var provinceIndex = findIndex(allProvince, provinceNow);
+
+	        if(provinceIndex != null){
+	        	groupCityKey = '0_' + provinceIndex;
+		        groupCity = dsy.Items[groupCityKey];
+		        scope[module].adress[adressType].city = groupCity;
+		        scope[module].adress[adressType].county = [];
+	        };
+	      };
+	    });
+
+	    scope.$watch(module + '.data.' + cityKey, function () {
+	      var cityNow = scope[module].data[cityKey];
+
+	      if(cityNow){
+	        var cityIndex = findIndex(groupCity, cityNow);
+
+	        if(cityIndex != null){
+	        	var CountyKey = groupCityKey + '_' + cityIndex;
+		        groupCounty = dsy.Items[CountyKey];
+		        scope[module].adress[adressType].county = groupCounty;
+	        };
+	      };
+	    });
+	};
+
+	//根据时间选择器获得时间
+	var getDateObject = function (fn) {
+		if(!$.fn.calenderFun){
+			return;
+		};
+		
+		$.fn.calenderFun({
+          'minYear' : '1900',
+          'maxYear' : '2100',
+          'dateFormat'  : 'yyyy-mm-dd',
+          'callBackFun':function (data){
+          	fn && fn(data);
+          }
+	    });
+	};
+
+	//根据生日算年龄
+	var birthdayToAge = function (birthday) {
+		var myDate = new Date();
+		var month = myDate.getMonth() + 1; 
+		var day = myDate.getDate(); 
+		var age = myDate.getFullYear() - birthday.substring(0, 4) - 1; 
+		if ((birthday.substring(4, 6) < month || birthday.substring(4, 6) == month) && birthday.substring(6, 8) <= day) { 
+			age++; 
+		};
+		return age;
+	};
+
+	//单位数转两位数
+	var toDouble = function (num) {
+		if(num<10){
+			  return "0"+num;
+		}
+		else{
+			  return ""+num;
+		};
+	};
+
+	//获取当前时间
+	var getTimeNow = function () {
+		var json = {};
+		var oDate = new Date();
+
+		json.year = oDate.getFullYear();
+		json.month = toDouble(oDate.getMonth()+1);
+		json.date  = toDouble(oDate.getDate());
+		json.hours = oDate.getHours();
+		json.minutes = oDate.getMinutes();
+		json.timeMs = oDate.getTime();
+
+		return json;
+	};
+
+	var jsonClone = function (json){
+		var newJson = {};
+
+		for(var attr in json){
+			newJson[attr] = json[attr];
+		};
+
+		return newJson;
+	};
+
+	function createUUid(){
+		var uuid = new UUID().createUUID();
+		uuid = uuid.replace(/[-]/g, "");  
+		return uuid; 
+	};
+
+	//把codeName转化为code
+	function codeNameToCode (form, codeName) {
+		for(var i=0; i<form.length; i++){
+			if(form[i].CODE_NAME == codeName){
+				return form[i].CODE;
+			};
+		};
+
+		return undefined;
+	};
+
+	//把code转化为codeName
+	function codeToCodeName (form, code) {
+		for(var i=0; i<form.length; i++){
+			if(form[i].CODE == code){
+				return form[i].CODE_NAME;
+			};
+		};
+
+		return undefined;
+	};
+
+	function deleteElementInArr (arr, ele) {
+		for(var i=0; i<arr.length; i++){
+			if(arr[i] == ele){
+				arr.splice(i,1);
+			};
+		};
+	};
+
+	function checkConnection() {
+		return window.navigator.onLine;
+	};
+
+	return {
+		hideBarFn           : hideBarFn,
+		showBarFn           : showBarFn,
+		findIndex           : findIndex,
+		adressSelect        : adressSelect,
+		getUserAge          : getUserAge,
+		getDateFn	        : getDateObject,
+		birthdayToAgeFn     : birthdayToAge,
+		getTimeNowFn        : getTimeNow,
+		jsonClone           : jsonClone,
+		createUUid          : createUUid,
+		getQueryStringByName: getQueryStringByName,
+		pushToViewCtrl      : pushToViewCtrl,
+		closeWebViewFn      : closeWebViewFn,
+		codeNameToCode      : codeNameToCode,
+		codeToCodeName      : codeToCodeName,
+		deleteElementInArr  : deleteElementInArr,
+		checkConnection     : checkConnection
+	};
+}]);
+
+//创建建议书
+AppServices.factory('manuScriptServer', ['Variables', 'CommonFn', 'relationshipData', 'dataInit', function (Variables, CommonFn, relationshipData, dataInit) {
+
+	var appId = Variables.recommend_appId;
+	var platform = Variables.platform;
+
+	//创建建议书
+	function createManuscript (sendMsg){
+		var url = "promodel/"+appId+"/www/index.html#/customer/none/Y?pctype="+platform+"&proid="+appId;
+		var jsonKey ={
+		  "serviceType":"LOCAL",
+		  "URL": url,
+		  "key":sendMsg
+		};
+
+		CommonFn.pushToViewCtrl(jsonKey);
+	};
+
+	//组装数据
+	function createMsg (scope, detailData, fn) {
+	    var key             = {};
+	    var array           = {};
+
+	    key["recommend"]    = scope.CustomerDetailModule.attr.recommend;
+	    array["id"] 	    = detailData.ID;//客户编号
+	    array["name"]       = detailData.REAL_NAME;//客户姓名
+	    array["birth"]      = detailData.BIRTHDAY;//客户生日
+	    array["sex"]        = detailData.SEX;//客户性别
+	    array["ocup_code"]  = detailData.OCCUPATION_CODE;//职业代码
+	    array["ocup_name"]  = detailData.OCCUPATION_CODE_NAME;//职业名称
+	    array["ocup_type"]  = detailData.OCCUPATION_CODE_TYPE;//职业类型
+	    
+	    if("2" == scope.CustomerDetailModule.attr.recommend){//选择的时被保人时，把与投保人得关系传过去
+	    	if(Variables.insurancerId){
+	    		if(detailData.ID == Variables.insurancerId){
+	    			array["relation"] = '00';
+	    			key["info"] = array;
+					fn && fn(key);
+	    		}else{
+	    			relationshipData.getRelation({
+						id: Variables.insurancerId
+					},function(arr){
+						var relationCode = '';
+						arr.forEach(function(obj){
+							if(obj.ID == detailData.ID){
+								relationCode = CommonFn.codeNameToCode(dataInit.allCode.relation.codeMap, obj.relationName);
+								//relationCode = obj.relationName;
+							};
+						});
+						array["relation"] = relationCode;
+						key["info"] = array;
+						fn && fn(key);
+					});
+	    		};
+	    	}else{
+	    		array["relation"] = '';
+    			key["info"] = array;
+				fn && fn(key);
+	    	};
+	    }else{
+	    	key["info"] = array;
+	    	fn && fn(key);
+	    };
+	};
+
+	return {
+		createManuscriptFn: function (sendMsg){
+			createManuscript(sendMsg);
+		},
+
+		createMsgFn: function (scope, detailData, fn) {
+			createMsg(scope, detailData, fn);
+		},
+
+		selectCustomFn: function (sendMsg) {
+			CommonFn.closeWebViewFn(sendMsg);
+		}
+	};
+}]);
+
+//职业搜索
+AppServices.factory('searchOccupationServer', ['Variables', function (Variables) {
+
+	function searchOccupationFn (opts) {
+		var keyWord = opts.keyWord;
+		var sql = "select * from T_CODE";
+	    if("" != keyWord){
+	    	if(opts.ruler){
+	    		sql+=" where CODE = "+keyWord+" or CODE_NAME = "+keyWord;
+	    	}else{
+	    		sql+=" where CODE like '%"+keyWord+"%' or CODE_NAME like '%"+keyWord+"%'";
+	    	};
+	    };
+
+	    var json = {
+	        "databaseName":Variables.occupationBaseName,
+	        "sql": sql+" order by CODE asc"
+	    };
+
+		queryTableDataUseSql(json,function(data){ //调用成功
+			opts.callBack && opts.callBack(data);
+		},function(){
+			console.log('查询出错！');
+		});
+	};
+
+	return {
+		searchOccupation: function (opts) {
+			return searchOccupationFn(opts);
+		}
+	}
+}]);
+
+//客户增、删、改、查
+AppServices.factory('UsrData', ['$rootScope', '$state', 'Variables', 'CommonFn', 'dataInit', function ($rootScope, $state, Variables, CommonFn, dataInit) {
+	//静态数据用于测试
+	var staticData = [
+		{
+				"ID": 1, //客户ID
+				"CODE": '111', //客户唯一标识
+				"REAL_NAME": '柯织',//姓名
+				"SEX": '女',//性别
+				"BIRTHDAY": 'ssss',//出生日期
+				"AGE": '', //年龄
+				"TYPE": '准客户',//客户类型
+				"IDTYPE": 'yyyyyy',//证件类型
+				"IDNO": 'tttrerrefsggs',//证件号
+				"ID_START_DATE": '',//证件有效起日
+				"ID_END_DATE": 'ppppppp',//证件有效止日
+				"MARRI_STATUS": 'xccxcxccx',//婚姻状况
+				"NATIVE_PLACE": 'adadaddad',//国籍
+				"NATIONALITY": '回族',//民族
+				"SOURCE": '转介绍',//客户来源
+				"EDUCATION": 'jksjsjk',//学历
+				"HOBBY": 'ksjksjkj',//爱好
+				"ANNIVERSARY": 'sjsknzn',//特殊纪念日
+				"INCOME": 'mkknxnj',//收入
+				"OTHER_INCOME_WAY": 'bbbzvhgh',//其他收入来源
+				"WORK_UNIT": 'zdzddzdz',//工作单位
+				"HEIGHT": 'kkkk',//身高
+				"WEIGHT": 'sklsklk',//体重
+				"ACCOUNT_TENDENCY": 'xmmxmmxm',//账户倾向
+				"HOME_PROVINCE": 'sssklklk',//家庭地址（省）
+				"HOME_CITY": '北京',//家庭地址（市）
+				"HOME_COUNTY": 'ooppooiiii',//家庭地址（区）
+				"HOME_ADDRESS": 'sjksjkjsk',//家庭详细地址
+				"HOME_ZIP_CODE": 'skjskjskjk',//家庭邮编
+				"COMPANY_PROVINCE": 'sksks',//单位地址（省）
+				"COMPANY_CITY": 'www',//单位地址（市）
+				"COMPANY_COUNTY": 'oooo',//单位地址（区）
+				"COMPANY_ADDRESS": 'xxxx',//单位详细地址
+				"COMPANY_ZIP_CODE": 'skskskks',//单位邮编
+				"HOME_PHONE": 'mmmmmmmssjjsj',//家庭电话
+				"COMPANY_PHONE": 'xxcxcxc',//公司电话
+				"MOBILE": '8788747847',//手机号码
+				"MAILING_ADDRESS": 'ewewewe',//邮寄地址
+				"REMARKS": 'nxhshshgsgg',//备注
+				"RGT_PROVINCE": 'uuwyywtwt',//户籍省
+				"RGT_CITY": 'sywtwg',//户籍市
+				"HOUSEHOLD_COUNTY": 'syyuwytww', //户籍区
+				"HOUSEHOLD_ADRESS": 'ewewewe', //户籍详细地址
+				"CREATE_TIME": '2014-01-01',//创建时间
+				"UPDATE_TIME": '2014-11-13',//修改时间
+				"EMAIL": '',//邮箱
+				"STATE": '',//状态
+				"AGENT_CODE": '',//业务员编号
+				"QQ": '',//QQ号
+				"MSN": '',//msn号
+				"WEIBO_TYPE": '',//微博类型
+				"WEIBO_NO": '',//微博账号
+				"PLURALITY_OCCUPATION_CODE": '',//兼职职业类别
+				"FLAG": '',//判断数据是否同步
+				"IOCN": '',//客户图像
+				"IS_FOREVER": '',//长期有效
+				"INCOME_WAY": '',//收入来源
+				"OCCUPATION_CODE": '',//职业代码
+				"OCCUPATION_CODE_NAME": '',
+				"OCCUPATION_CODE_TYPE": '',
+				"relationShipData": [],
+				"otherContactMethod": [
+					{
+						"type": "QQ",
+						"value": "4484894894"
+					},
+					{
+						"type": "MSN",
+						"value": "kkjkjkdjd6373763"
+					}
+				]
+		},
+		{
+				"ID": 2, //客户ID
+				"CODE": '111', //客户唯一标识
+				"REAL_NAME": '兰姐',//姓名
+				"SEX": '女',//性别
+				"BIRTHDAY": 'ssss',//出生日期
+				"AGE": '24', //年龄
+				"TYPE": 'iiiii',//客户类型
+				"IDTYPE": 'yyyyyy',//证件类型
+				"IDNO": 'tttrerrefsggs',//证件号
+				"ID_START_DATE": '',//证件有效起日
+				"ID_END_DATE": 'ppppppp',//证件有效止日
+				"MARRI_STATUS": 'xccxcxccx',//婚姻状况
+				"NATIVE_PLACE": 'adadaddad',//国籍
+				"NATIONALITY": 'rtqrwtrwtwt',//民族
+				"SOURCE": 'njmncbhjjh',//客户来源
+				"EDUCATION": 'jksjsjk',//学历
+				"HOBBY": 'ksjksjkj',//爱好
+				"ANNIVERSARY": 'sjsknzn',//特殊纪念日
+				"INCOME": 'mkknxnj',//收入
+				"OTHER_INCOME_WAY": 'bbbzvhgh',//其他收入来源
+				"WORK_UNIT": 'zdzddzdz',//工作单位
+				"HEIGHT": 'kkkk',//身高
+				"WEIGHT": 'sklsklk',//体重
+				"ACCOUNT_TENDENCY": 'xmmxmmxm',//账户倾向
+				"HOME_PROVINCE": 'sssklklk',//家庭地址（省）
+				"HOME_CITY": '北京',//家庭地址（市）
+				"HOME_COUNTY": 'ooppooiiii',//家庭地址（区）
+				"HOME_ADDRESS": 'sjksjkjsk',//家庭详细地址
+				"HOME_ZIP_CODE": 'skjskjskjk',//家庭邮编
+				"COMPANY_PROVINCE": 'sksks',//单位地址（省）
+				"COMPANY_CITY": 'www',//单位地址（市）
+				"COMPANY_COUNTY": 'oooo',//单位地址（区）
+				"COMPANY_ADDRESS": 'xxxx',//单位详细地址
+				"COMPANY_ZIP_CODE": 'skskskks',//单位邮编
+				"HOME_PHONE": 'mmmmmmmssjjsj',//家庭电话
+				"COMPANY_PHONE": 'xxcxcxc',//公司电话
+				"MOBILE": '',//手机号码
+				"MAILING_ADDRESS": 'ewewewe',//邮寄地址
+				"REMARKS": 'nxhshshgsgg',//备注
+				"RGT_PROVINCE": 'uuwyywtwt',//户籍省
+				"RGT_CITY": 'sywtwg',//户籍市
+				"HOUSEHOLD_COUNTY": 'syyuwytww', //户籍区
+				"HOUSEHOLD_ADRESS": 'ewewewe', //户籍详细地址
+				"CREATE_TIME": '2014-01-01',//创建时间
+				"UPDATE_TIME": '2014-11-13',//修改时间
+				"EMAIL": '',//邮箱
+				"STATE": '',//状态
+				"AGENT_CODE": '',//业务员编号
+				"QQ": '',//QQ号
+				"MSN": '',//msn号
+				"WEIBO_TYPE": '',//微博类型
+				"WEIBO_NO": '',//微博账号
+				"PLURALITY_OCCUPATION_CODE": '',//兼职职业类别
+				"FLAG": '',//判断数据是否同步
+				"IOCN": '',//客户图像
+				"IS_FOREVER": '',//长期有效
+				"INCOME_WAY": '',//收入来源
+				"OCCUPATION_CODE": '',//职业代码
+				"relationShipData": []
+		},
+		{
+				"ID": 3, //客户ID
+				"CODE": '111', //客户唯一标识
+				"REAL_NAME": '晶晶',//姓名
+				"SEX": '女',//性别
+				"BIRTHDAY": 'ssss',//出生日期
+				"AGE": '24', //年龄
+				"TYPE": 'iiiii',//客户类型
+				"IDTYPE": 'yyyyyy',//证件类型
+				"IDNO": 'tttrerrefsggs',//证件号
+				"ID_START_DATE": '',//证件有效起日
+				"ID_END_DATE": 'ppppppp',//证件有效止日
+				"MARRI_STATUS": 'xccxcxccx',//婚姻状况
+				"NATIVE_PLACE": 'adadaddad',//国籍
+				"NATIONALITY": 'rtqrwtrwtwt',//民族
+				"SOURCE": 'njmncbhjjh',//客户来源
+				"EDUCATION": 'jksjsjk',//学历
+				"HOBBY": 'ksjksjkj',//爱好
+				"ANNIVERSARY": 'sjsknzn',//特殊纪念日
+				"INCOME": 'mkknxnj',//收入
+				"OTHER_INCOME_WAY": 'bbbzvhgh',//其他收入来源
+				"WORK_UNIT": 'zdzddzdz',//工作单位
+				"HEIGHT": 'kkkk',//身高
+				"WEIGHT": 'sklsklk',//体重
+				"ACCOUNT_TENDENCY": 'xmmxmmxm',//账户倾向
+				"HOME_PROVINCE": 'sssklklk',//家庭地址（省）
+				"HOME_CITY": '北京',//家庭地址（市）
+				"HOME_COUNTY": 'ooppooiiii',//家庭地址（区）
+				"HOME_ADDRESS": 'sjksjkjsk',//家庭详细地址
+				"HOME_ZIP_CODE": 'skjskjskjk',//家庭邮编
+				"COMPANY_PROVINCE": 'sksks',//单位地址（省）
+				"COMPANY_CITY": 'www',//单位地址（市）
+				"COMPANY_COUNTY": 'oooo',//单位地址（区）
+				"COMPANY_ADDRESS": 'xxxx',//单位详细地址
+				"COMPANY_ZIP_CODE": 'skskskks',//单位邮编
+				"HOME_PHONE": 'mmmmmmmssjjsj',//家庭电话
+				"COMPANY_PHONE": 'xxcxcxc',//公司电话
+				"MOBILE": '',//手机号码
+				"MAILING_ADDRESS": 'ewewewe',//邮寄地址
+				"REMARKS": 'nxhshshgsgg',//备注
+				"RGT_PROVINCE": 'uuwyywtwt',//户籍省
+				"RGT_CITY": 'sywtwg',//户籍市
+				"HOUSEHOLD_COUNTY": 'syyuwytww', //户籍区
+				"HOUSEHOLD_ADRESS": 'ewewewe', //户籍详细地址
+				"CREATE_TIME": '2014-01-01',//创建时间
+				"UPDATE_TIME": '2014-11-13',//修改时间
+				"EMAIL": '',//邮箱
+				"STATE": '',//状态
+				"AGENT_CODE": '',//业务员编号
+				"QQ": '',//QQ号
+				"MSN": '',//msn号
+				"WEIBO_TYPE": '',//微博类型
+				"WEIBO_NO": '',//微博账号
+				"PLURALITY_OCCUPATION_CODE": '',//兼职职业类别
+				"FLAG": '',//判断数据是否同步
+				"IOCN": '',//客户图像
+				"IS_FOREVER": '',//长期有效
+				"INCOME_WAY": '',//收入来源
+				"OCCUPATION_CODE": ''//职业代码
+		},
+		{
+				"ID": 4, //客户ID
+				"CODE": '111', //客户唯一标识
+				"REAL_NAME": '芒玲',//姓名
+				"SEX": '女',//性别
+				"BIRTHDAY": 'ssss',//出生日期
+				"AGE": '24', //年龄
+				"TYPE": 'iiiii',//客户类型
+				"IDTYPE": 'yyyyyy',//证件类型
+				"IDNO": 'tttrerrefsggs',//证件号
+				"ID_START_DATE": '',//证件有效起日
+				"ID_END_DATE": 'ppppppp',//证件有效止日
+				"MARRI_STATUS": 'xccxcxccx',//婚姻状况
+				"NATIVE_PLACE": 'adadaddad',//国籍
+				"NATIONALITY": 'rtqrwtrwtwt',//民族
+				"SOURCE": 'njmncbhjjh',//客户来源
+				"EDUCATION": 'jksjsjk',//学历
+				"HOBBY": 'ksjksjkj',//爱好
+				"ANNIVERSARY": 'sjsknzn',//特殊纪念日
+				"INCOME": 'mkknxnj',//收入
+				"OTHER_INCOME_WAY": 'bbbzvhgh',//其他收入来源
+				"WORK_UNIT": 'zdzddzdz',//工作单位
+				"HEIGHT": 'kkkk',//身高
+				"WEIGHT": 'sklsklk',//体重
+				"ACCOUNT_TENDENCY": 'xmmxmmxm',//账户倾向
+				"HOME_PROVINCE": 'sssklklk',//家庭地址（省）
+				"HOME_CITY": '北京',//家庭地址（市）
+				"HOME_COUNTY": 'ooppooiiii',//家庭地址（区）
+				"HOME_ADDRESS": 'sjksjkjsk',//家庭详细地址
+				"HOME_ZIP_CODE": 'skjskjskjk',//家庭邮编
+				"COMPANY_PROVINCE": 'sksks',//单位地址（省）
+				"COMPANY_CITY": 'www',//单位地址（市）
+				"COMPANY_COUNTY": 'oooo',//单位地址（区）
+				"COMPANY_ADDRESS": 'xxxx',//单位详细地址
+				"COMPANY_ZIP_CODE": 'skskskks',//单位邮编
+				"HOME_PHONE": 'mmmmmmmssjjsj',//家庭电话
+				"COMPANY_PHONE": 'xxcxcxc',//公司电话
+				"MOBILE": '',//手机号码
+				"MAILING_ADDRESS": 'ewewewe',//邮寄地址
+				"REMARKS": 'nxhshshgsgg',//备注
+				"RGT_PROVINCE": 'uuwyywtwt',//户籍省
+				"RGT_CITY": 'sywtwg',//户籍市
+				"HOUSEHOLD_COUNTY": 'syyuwytww', //户籍区
+				"HOUSEHOLD_ADRESS": 'ewewewe', //户籍详细地址
+				"CREATE_TIME": '2014-01-01',//创建时间
+				"UPDATE_TIME": '2014-11-13',//修改时间
+				"EMAIL": '',//邮箱
+				"STATE": '',//状态
+				"AGENT_CODE": '',//业务员编号
+				"QQ": '',//QQ号
+				"MSN": '',//msn号
+				"WEIBO_TYPE": '',//微博类型
+				"WEIBO_NO": '',//微博账号
+				"PLURALITY_OCCUPATION_CODE": '',//兼职职业类别
+				"FLAG": '',//判断数据是否同步
+				"IOCN": '',//客户图像
+				"IS_FOREVER": '',//长期有效
+				"INCOME_WAY": '',//收入来源
+				"OCCUPATION_CODE": ''//职业代码
+		}
+	];
+	var SCOPE = null;
+
+	//获取客户列表
+	var getListFn = function (opts) {
+		SCOPE = opts.scope;
+
+		if(opts.getStaticData){
+			//取静态数据
+			SCOPE.CustomerLists = staticData;
+		}else{
+			//从服务器上取得新数据
+			var reg = /undefined/g;
+			if(reg.test(Variables.dataBaseName)){
+				alert('数据库路径错误，缺少appId');
+				return;
+			};
+			
+			queryTableDataByConditions({
+				"databaseName": Variables.dataBaseName,
+	            "tableName": "T_CUSTOMER",
+	            "conditions": {
+	            	"AGENT_CODE": Variables.agentCode
+	            }
+			},function (CallBackData) {
+				SCOPE.CustomerLists = CallBackData.reverse();
+				SCOPE.$apply(SCOPE.CustomerLists);
+			},function(){
+				alert('获取客户列表失败');
+			});
+
+			// queryAllTableData({
+			// 	"databaseName": Variables.dataBaseName,
+			// 	"tableName": "T_CUSTOMER"
+			// },function (CallBackData) {
+			// 	SCOPE.CustomerLists = CallBackData.reverse();
+			// 	SCOPE.$apply(SCOPE.CustomerLists);
+			// },function(){
+			// 	alert('获取客户列表失败');
+			// });
+		};
+	};
+
+	//获取客户详情
+	var getUsrDetailFn = function (opts) {
+
+		var dataSearch = {};
+		var dataResult = {};
+		var translateDataArr = Variables.translateDataArr;
+
+		for(var i=0; i<SCOPE.CustomerLists.length; i++){
+			if(SCOPE.CustomerLists[i].ID == opts.ID){
+				dataSearch = SCOPE.CustomerLists[i];
+				break;
+			};
+		};
+
+		angular.forEach(dataSearch, function (value, key) {
+			dataResult[key] = value;
+		});
+
+		//是否把code转化为名称
+		if(opts.tanslateCode){
+			//把code值转化为名称
+			var codeType,
+				codeKey;
+
+			if(translateDataArr.length){
+				for(var i=0; i<translateDataArr.length; i++){
+					codeKey = translateDataArr[i].beTranslatedKey;
+					codeType = translateDataArr[i].codeType;
+					dataResult[codeKey] = CommonFn.codeToCodeName(dataInit.allCode[codeType].codeMap, dataResult[codeKey]);
+				};
+			};
+		};
+
+		return dataResult;
+	};
+
+	//编辑客户资料
+	var editUsrDataFn = function (newData, fn) {
+		if(newData.test){
+			editSeccess (newData);
+		}else{
+			setUsrFn(newData, fn);
+		};
+	};
+
+	//编辑成功
+	function editSeccess (newData) {
+		for(var i=0; i<SCOPE.CustomerLists.length; i++){
+			if(SCOPE.CustomerLists[i].ID == newData.ID){
+				SCOPE.CustomerLists[i] = newData;
+				var removeJson = SCOPE.CustomerLists.splice(i,1);
+				SCOPE.CustomerLists.unshift(newData);
+				break;
+			};
+		};
+		$rootScope.commonModule.goBack();
+	};
+
+	//提交表单时，把名称转化为code
+	function translateTheNameToCode (dataSorce, arrRule) {
+		var modelKey = '';
+		var codeMapName = '';
+
+		for(var i=0; i<arrRule.length; i++){
+			modelKey = arrRule[i].beTranslatedKey;
+			codeMapName = arrRule[i].codeType;
+
+			if(dataSorce[modelKey]){
+				dataSorce[modelKey] = CommonFn.codeNameToCode(dataInit.allCode[codeMapName].codeMap, dataSorce[modelKey]);
+			};
+		};
+	};
+
+	//添加或编辑客户
+	var setUsrFn = function (opts, fn) {
+
+		opts.data = angular.copy(opts.data);
+
+		var dateNow           = CommonFn.getTimeNowFn();
+		var dateCreate        = dateNow.year + '-' + dateNow.month + '-' + dateNow.date;
+
+		if(opts.add){
+			opts.data.ID      = CommonFn.createUUid();
+		};
+		
+		opts.data.CREATE_TIME = dateCreate;
+		opts.data.UPDATE_TIME = dateCreate;
+        opts.data.AGENT_CODE  = Variables.agentCode;
+
+        //提交数据到数据库时，把名称转化为code
+        translateTheNameToCode(opts.data, Variables.translateDataArr);
+
+        //去除一些ionic框架添加的额外字段
+        if('$$hashKey' in opts.data){
+        	delete opts.data['$$hashKey'];
+		};
+
+		//不允许提交value为null的值
+		angular.forEach(opts.data, function (value, key) {
+			if(value == null || value == ''){
+				opts.data[key] = '';
+			};
+		});
+
+		if(opts.test){
+			//addCustomSuccess(opts.data, opts.jumpToDetail);
+			fn && fn(SCOPE, opts.data);
+		}else{
+			var ManipulateJson = {
+				"databaseName": Variables.dataBaseName,
+				"tableName"   : opts.formName,
+				"conditions"  : [{"ID": opts.data.ID}],
+				"data"        : [opts.data]
+			};
+
+			//插入数据到本地数据库
+			updateORInsertTableDataByConditions(ManipulateJson,function(str){
+				if(1 == str[0]){	
+					//addCustomSuccess(opts.data, opts.jumpToDetail);
+					fn && fn(SCOPE, opts.data);
+				}else{
+					alert('新增客户失败');
+				}
+			},function(){
+				alert("数据插入异常！");
+			})
+		};
+	};
+
+	//添加客户成功
+	var addCustomSuccess = function (data, jump) {
+		SCOPE.CustomerLists.unshift(data);
+		//SCOPE.$apply(SCOPE.CustomerLists);
+		if($rootScope.commonModule.isPad){
+			if(jump){
+				//如果是pad，则添加完新客户后，跳转到此客户的详情展示页；
+	      		$state.go('app.CustomerMain.usrDetailJump',{usrListId: data.ID});
+			};
+	    }else{
+	      //如果是手机，则返回列表
+	      $rootScope.commonModule.goBack();
+	    };
+	};
+
+	//删除客户
+	var deleteUsrFn = function (opts, fnScc) {
+		//是否只从静态数据中删除
+		if(opts.useStaticData){
+			deleteUsrInStaticData(opts, fnScc);
+		}else{
+			//调用原生插件删除
+			deleteTableData({
+				"databaseName": Variables.dataBaseName,
+				"tableName": "T_CUSTOMER",
+				"conditions": [{
+					"ID": opts.ID
+				}]
+			},function(arr){
+				if(1 == arr[0]){	
+					deleteUsrInStaticData(opts, fnScc);
+				}else{
+					alert('删除失败');
+				}
+		    },function(){
+		        alert("数据删除异常！");
+		    });
+		};
+	};
+
+	//从scope上删除客户
+	var deleteUsrInStaticData = function (opts, fnScc) {
+		for(var i=0; i<SCOPE.CustomerLists.length; i++){
+			if(SCOPE.CustomerLists[i].ID == opts.ID){
+				SCOPE.CustomerLists.splice(i,1);
+				fnScc && fnScc();
+			};
+		};
+	};
+
+	//搜索客户
+	var searchUsrFn = function (scope) {
+		var keyWord = scope.MyCustomerListCtrlModule.data.keyWord;
+		var sql = "select * from T_CUSTOMER";
+	    if("" != keyWord){
+	    	sql+=" where REAL_NAME like '%"+keyWord+"%'";
+	    }else{
+	    	getListFn({
+		      getStaticData: false,
+		      scope: scope
+		    });
+	    	return;
+	    };
+
+	    var json = {
+	        "databaseName":Variables.dataBaseName,
+	        "sql": sql
+	    };
+
+		queryTableDataUseSql(json,function(CallBackData){ //调用成功
+			SCOPE.CustomerLists = CallBackData.reverse();
+			SCOPE.$apply(SCOPE.CustomerLists);
+		},function(){
+			console.log('查询出错！');
+		});
+	};
+
+	//接口导出
+	return {
+		//获取客户列表
+		getList: function (opts) {
+			getListFn(opts);
+		},
+
+		//获取客户个人详情
+		getUsrDetail: function (opts) {
+			return getUsrDetailFn(opts);
+		},
+
+		//新增客户
+		setUsr: function (opts, fn) {
+			setUsrFn(opts, fn);
+		},
+
+		//编辑客户
+		editUsrData: function (opts, fn) {
+			editUsrDataFn(opts, fn);
+		},
+
+		//删除客户
+		deleteUsrList: function (opts, fnScc) {
+			deleteUsrFn(opts, fnScc);
+		},
+
+		//查找客户
+		searchUsr: function (opts) {
+			searchUsrFn(opts);
+		},
+
+		addCustomSuccessFn: function(data, jump){
+			addCustomSuccess(data, jump);
+		},
+
+		editSeccessFn: function (data) {
+			editSeccess(data);
+		}
+	}
+}]);
+
+//获取客户关系信息
+AppServices.factory('relationshipData', ['Variables', 'UsrData', 'CommonFn', 'dataInit', function (Variables, UsrData, CommonFn, dataInit) {
+	var familyData = null;//RELATION
+	var relationData = dataInit.allCode.relation.codeMap;//关系代码CODE
+	var resultRelationMsg = [];
+	
+	var getFamilyDataFn = function (opts, fn) {
+		//根据客户id查询此客户的所有家属信息(relation)
+		queryTableDataByConditions({
+			"databaseName": Variables.dataBaseName,
+            "tableName": "T_CUSTOMER_FAMILY",
+            "conditions": {
+            	"FIRST_CUSTOMER_ID": opts.id
+            }
+		},function (CallBackData) {
+			familyData = CallBackData;
+			sortTheRelation(familyData, fn);
+		},function(){
+			alert('获取关系信息失败');
+		});
+	};
+
+	//以关系code为字段分类客户的所有关系信息
+	function sortTheRelation (arrFamily, fn) {
+		resultRelationMsg.length = 0;
+		
+		for(var i=0; i<arrFamily.length; i++){
+			var relationKey  = arrFamily[i].RELATION;
+			var secondCode   = arrFamily[i].SECOND_CUSTOMER_ID;
+			var relationName = getRelationNameFromCode(relationKey, relationData);
+			var familyMsg    = UsrData.getUsrDetail({ID: secondCode});
+
+			if('ID' in familyMsg){
+				familyMsg.relationName = relationName;
+				resultRelationMsg.push(familyMsg);
+			};
+		};
+
+		fn && fn(resultRelationMsg);
+	};
+
+	//根据关系code查找关系名称
+	function getRelationNameFromCode (code, codeArr) {
+		for(var i=0; i<codeArr.length; i++){
+			if(codeArr[i].CODE == code){
+				return codeArr[i].CODE_NAME;
+			};
+		};
+	};
+
+
+	var count = 0;
+
+	//插入客户的关系信息
+	function addCustomRelationShipFn (arr, id, fn, countRelation) {
+		if(!arr.length){
+			return;
+		};
+
+		var newCustomData       = {};
+	    var relationShipDataNow = arr.pop();
+
+	    (function (relationShipData) {
+	    	newCustomData.SEX       = relationShipData.SEX;
+		    newCustomData.REAL_NAME = relationShipData.REAL_NAME;
+		    newCustomData.BIRTHDAY  = relationShipData.BIRTHDAY;
+		    newCustomData.AGE       = relationShipData.AGE;
+
+		    UsrData.setUsr({
+				data        : newCustomData,
+				test        : false,
+				add         : true,
+				formName    : 'T_CUSTOMER'
+			},function (SCOPE, data){
+				SCOPE.CustomerLists.unshift(data);
+				addFamily(data, relationShipData.relationShipType, id, function(){
+					count++;
+					if(count == countRelation){
+						fn && fn();
+					};
+				});
+			});
+
+	    })(relationShipDataNow);
+		
+		//递归添加关系信息
+		addCustomRelationShipFn(arr, id, fn, countRelation);
+	};
+
+	//向家庭表里插入客户
+	function addFamily (data, relationType, id, fn) {
+
+        //去除一些ionic框架添加的额外字段
+        if('$$hashKey' in data){
+        	delete data['$$hashKey'];
+		};
+
+		//不允许提交value为null的值
+		angular.forEach(data, function (value, key) {
+			if(value == null){
+				value = '';
+			};
+		});
+
+		var familyKey = CommonFn.createUUid();
+		
+		var relationJson = {
+			"databaseName": Variables.dataBaseName,
+			"tableName"   : 'T_CUSTOMER_FAMILY',
+			"conditions"  : [{"ID": familyKey}],
+			"data"        : [{
+				"ID": familyKey, //家庭信息ID
+				"FIRST_CUSTOMER_ID": id,//主客户id
+				"SECOND_CUSTOMER_ID": data.ID,//从客户id
+				"RELATION": relationType.CODE,//关系
+				"CREATE_TIME":data.CREATE_TIME,//创建时间
+				"UPDATE_TIME":data.UPDATE_TIME
+			}]
+		};
+		
+		//插入数据到本地数据库
+		updateORInsertTableDataByConditions(relationJson,function(str){
+			if(1 != str[0]){	
+				alert('失败');
+			}else{
+				fn && fn();
+			};
+		},function(){
+			alert("数据插入异常！");
+		})
+	};
+
+	return {
+		//根据ID获取客户关系信息
+		getRelation: function (opts, fn) {
+			getFamilyDataFn(opts, fn);
+		},
+
+		addCustomRelationShip: function (arr, id, fn, countRelation) {
+			count = 0;
+			addCustomRelationShipFn(arr, id, fn, countRelation);
+		}
+	};
+}]);

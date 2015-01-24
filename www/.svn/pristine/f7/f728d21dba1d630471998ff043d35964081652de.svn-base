@@ -1,0 +1,15 @@
+<div class="row noPadding item-margin-bottom-15px">
+	<div class="col col-50 noPadding">
+		<div class="my-text-input hasRightIcon">
+			<input ng-model="childScopeBirthday" name="birthdayInput" type="text" placeholder="出生日期">
+			<div class="hide-div"></div>
+			<a class="button button-icon icon ion-ios-calendar-outline"></a>
+		</div>
+	</div>
+	<div class="col noPadding">
+		<div class="age-style">
+			<span>{{childScopeAge | age}}</span>
+			<p class="error-font" ng-show="!childScopeAgePass">生日不能大于现在时间</p>
+		</div>
+	</div>
+</div>

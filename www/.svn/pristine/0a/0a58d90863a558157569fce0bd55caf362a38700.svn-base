@@ -1,0 +1,492 @@
+@charset "utf-8";
+/**!
+ * @description:根据项目特点需要对框架做得一些样式修饰
+ * @author:xiaolong
+ * @update:update by xiaolong(2014-12-8)
+ */
+
+/**
+ * 右侧第二屏样式
+ */
+.XL-blankpage-style{
+	position:absolute;
+	left:320px;
+	top:0px;
+	right:0px;
+	bottom:0px;
+	background:#f7f7f7 url('../img/blankBg.jpg') center center no-repeat; 
+	background-size:250px 119px;
+	border-left:1px solid #ccc;
+}
+
+/**
+ * 单选按钮
+ */
+.item-radio .my-item-content{
+	padding: 12px;
+	text-align: center;
+	border-radius: 5px;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	font-size: 12px;
+}
+.item-radio input:checked ~ .my-item-content{
+	background: #d14014;
+	color: #fff;
+}
+
+
+
+/**
+ * 复选按钮
+ */
+.mycheckbox-box{
+	width: 82px;
+	height: 45px;
+	padding-left: 10px;
+}
+.my-item-checkbox{
+	text-align: center;
+	background: #ccc;
+	border:none;
+	border-radius: 5px;
+	height: 45px;
+	padding: 0px;
+}
+.my-checkbox-bg{
+	position: absolute;
+	left: -8px;
+	top: -2px;
+	width: 72px;
+	height: 45px;
+	border-radius: 5px;
+}
+.my-checkbox-font{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+}
+.my-item-checkbox .my-checkbox{
+	position: absolute;
+	top: 50%;
+	right: 8px;
+	left: 8px;
+	z-index: 3;
+	margin-top: -21px;
+}
+.my-checkbox{
+	position: relative;
+	display: inline-block;
+	padding: 7px;
+	cursor: pointer;
+}
+.my-item-checkbox input:checked ~ .my-checkbox-bg{
+	background-color: #d14014;
+}
+.my-item-checkbox input:checked ~ .my-checkbox-font{
+	color: #fff;
+}
+.my-checkbox input::after{
+	-webkit-transition: opacity 0.05s ease-in-out;
+	-moz-transition: opacity 0.05s ease-in-out;
+	transition: opacity 0.05s ease-in-out;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+	position: absolute;
+	top: 30%;
+	left: 26%;
+	display: table;
+	width: 15px;
+	height: 10.33333px;
+	border: 3px solid #fff;
+	border-top: 0;
+	border-right: 0;
+	content: ' ';
+	opacity: 0; 
+}
+.my-checkbox input{
+	position: relative;
+	width: 28px;
+	height: 28px;
+	display: block;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	-webkit-appearance: none; 
+}
+
+/**
+ * 复选按钮2
+ */
+.mycheckbox-box-other{
+	height: 44px;
+}
+.my-item-checkbox-other{
+	text-align: center;
+	background: #fff;
+	height: 44px;
+	padding: 0px;
+	border:1px solid #d14014;
+	border-radius: 5px !important;
+}
+.my-checkbox-bg-other{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	border-radius: 5px;
+}
+.my-checkbox-font-other{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 44px;
+	line-height: 44px;
+}
+.my-checkbox-other{
+	position: absolute;
+	cursor: pointer;
+	left: 0px;
+	top: 0px;
+	height: 100%;
+	width: 100%;
+}
+.my-item-checkbox-other input:checked ~ .my-checkbox-bg-other{
+	background-color: #d14014;
+}
+.my-item-checkbox-other input:checked ~ .my-checkbox-font-other{
+	color: #fff;
+}
+.my-checkbox-other input::after{
+	-webkit-transition: opacity 0.05s ease-in-out;
+	-moz-transition: opacity 0.05s ease-in-out;
+	transition: opacity 0.05s ease-in-out;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+	position: absolute;
+	top: 30%;
+	left: 26%;
+	display: table;
+	width: 15px;
+	height: 10.33333px;
+	border: 3px solid #fff;
+	border-top: 0;
+	border-right: 0;
+	content: ' ';
+	opacity: 0; 
+}
+.my-checkbox-other input{
+	position: relative;
+	width: 28px;
+	height: 28px;
+	display: block;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	-webkit-appearance: none; 
+}
+
+/**
+ * 下拉选择
+ */
+.my-item-select{
+	position: relative;
+}
+.my-item-select::after{
+	position: absolute;
+	font-family: "Ionicons";
+	display: inline-block;
+	top: 50%;
+	right: 16px;
+	margin-top: -10px;
+	color: #999;
+	content: "\f3d3";
+}
+.my-item-select .input-label{
+	color: #999;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	opacity: 0;
+	padding: 12px 10px 12px 0px;
+}
+.my-item-select select{
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	position: absolute;
+	top: 0;
+	left: 0px;
+	padding: 12px 0px 12px 12px;
+	border: none;
+	background: #fff;
+	color: #333;
+	text-indent: 0.01px;
+	text-overflow: '';
+	white-space: nowrap;
+	font-size: 15px;
+	cursor: pointer;
+	direction: ltr; 
+	bottom: 0px;
+}
+
+/**
+ * 年龄样式
+ */
+.age-style{
+	margin-left: 10px;
+}
+.age-style span{
+	padding: 12px 20px;
+	display: inline-block;
+	background: #ccc;
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+.my-text-input{
+	border-radius: 2px;
+	border:1px solid #dddddd;
+	padding: 5px 10px;
+	height: 42px;
+}
+.my-text-input.hasRightText{
+	padding-right: 15px;
+	position: relative;
+}
+.my-text-input.hasRightText span{
+	position: absolute;
+	right: 5px;
+	top: 50%;
+	-webkit-transform:translateY(-50%);
+	color: #dddddd;
+}
+.my-text-input.hasRightIcon{
+	position: relative;
+	padding-right: 15px;
+}
+.my-text-input.hasRightIcon a{
+	position: absolute;
+	right: 5px;
+	top: 50%;
+	-webkit-transform:translateY(-50%);
+	color: #d14014;
+}
+.my-text-input.hasRightIcon .hide-div{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+}
+.my-text-input .inputTextBox{
+	position: absolute;
+	height: 30px;
+	left: 5px;
+	right: 30px;
+	top: 50%;
+	-webkit-transform:translateY(-50%);
+	font-size: 0px;
+}
+.my-text-input .inputTextBox span{
+	padding: 0px 5px;
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	background: #ccc;
+	border-radius: 5px;
+	margin-right: 5px;
+	font-size: 14px;
+}
+.my-text-input .inputTextBox .occupationLabelBox{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+}
+
+
+/**
+ * 职业搜索
+ */
+.serach-box{
+	border:1px solid #ccc;
+	border-radius: 5px;
+	-webkit-box-flex:1;
+	margin:0px 10px 10px 10px;
+	position: relative;
+}
+.serach-box ion-content{
+	top: 44px;
+}
+.table_title div {
+	border-right: 1px solid #a1a1a1;
+	text-align: center;
+}
+.table_title {
+	border-bottom: 1px solid #979797;
+	background: #fff;
+}
+.table_title div:last-child {
+	border-right: 0;
+}
+.table_occuption div.table_items {
+	height: 35px;
+	line-height: 30px;
+	text-overflow:ellipsis;
+    white-space:nowrap;
+    overflow:hidden;
+    
+}
+.table_items div {
+	text-align: center;
+}
+div.items_content .table_items:nth-child(2n+1){
+	background: #fafafa;
+}
+div.items_content .table_items:nth-child(2n){
+	height: 45px;
+	line-height: 40px;
+}
+p.check_all span{
+	display: inline-block;
+	height: 20px;
+	width: 20px;
+	border: 1px solid #d14014;
+	border-radius: 20px;
+	margin-right: 10px;
+	margin-top: -2px;
+	vertical-align: middle;
+}
+p span.check_search {
+	background: url(../img/duigou.png) no-repeat;
+	background-size: 100% 100%;
+	border: none;
+}
+
+/**
+ * 创建建议书按钮
+ */
+.usrDetailFooterBotton{
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	background: #fff
+}
+.usrDetailFooterBotton button{
+	width: 282px;
+	margin: 0 auto;
+}
+
+/**
+ * card自定义样式
+ */
+.my-card{
+	margin: 25px 15px;
+}
+
+/**
+ * 自定义文本框样式
+ */
+.my-item-input{
+	padding: 12px 0px 12px 12px; 
+}
+.my-item-input input{
+	height: 20px;
+	font-size: 14px;
+}
+
+/**
+ * 搜索客户表单
+ */
+.seachCustomBox{
+	height: 44px;
+	position:absolute;
+	top:64px;
+	left:0px;
+	width: 320px;
+	background: #e9e8ed;
+	z-index: 1000;
+}
+.seachCustomBox form{
+	background: #fff;
+	height: 29px;
+	width: 300px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -15px 0px 0px -150px;
+	border-radius: 5px;
+	overflow: hidden;
+}
+.seachCustomBox input{
+	height: 29px;
+	width: 300px;
+	padding: 10px;
+}
+.searchCustomReminder{
+	position:absolute;
+	left:50%;
+	display:inline-block;
+	height:16px;
+	-webkit-transform:translate(-50%, -50%);
+	top:50%;
+}
+.searchCustomReminder span{
+	color: #ccc;
+}
+
+/**
+ * 自定义alert样式
+ * 
+ */
+.popup-container .popup{
+	border-radius: 5px;
+}
+.myokbutton{
+	background: #d14014;
+	border-radius: 5px !important;
+	border-color: #d14014;
+	color: #fff;
+}
+
+/**
+ * 自定义loading
+ */
+.pop_up_box {
+  min-width: 120px;
+  border-radius: 4px;
+  text-align: center;
+  color: #f9f9f7;
+  font-size: 13px;
+}
+.pop_up_box span {
+  display: block;
+  width: 47px;
+  height: 47px;
+  margin: 0 auto;
+}
+span.myloading {
+  width: 60px;
+  height: 60px;
+  background: url(../img/loading.png) no-repeat;
+  background-size: 100% 100%;
+  margin-bottom: 20px;
+  -webkit-animation-name: loading;
+  -webkit-animation-duration: 1.4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+@-webkit-keyframes loading {
+  from { -webkit-transform: rotate(0deg) translateZ(0); }
+  to { -webkit-transform: rotate(360deg) translateZ(0); }
+}

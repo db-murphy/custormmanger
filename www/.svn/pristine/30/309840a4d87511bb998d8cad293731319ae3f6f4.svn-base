@@ -1,0 +1,29 @@
+<!--AppCtrl-->
+<ion-side-menus>
+  
+  <!--右侧导航-->
+  <ion-pane ion-side-menu-content>
+    <ion-nav-bar id="bar" class="bar-stable nav-title-slide-ios7">
+      <ion-nav-back-button class="button-clear"><i class="icon ion-chevron-left"></i>返回</ion-nav-back-button>
+    </ion-nav-bar>
+    <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+  </ion-pane>
+
+  <!--左侧导航-->
+  <ion-side-menu side="left">
+    <ion-content >
+      <ion-list>
+        <ion-item nav-clear menu-close>
+          退出应用
+        </ion-item>
+        <ion-item nav-clear menu-close ng-click="commonModule.toUsrManage()">
+          客户管理
+        </ion-item>
+        <ion-item nav-clear menu-close>
+          标签管理
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+
+</ion-side-menus>

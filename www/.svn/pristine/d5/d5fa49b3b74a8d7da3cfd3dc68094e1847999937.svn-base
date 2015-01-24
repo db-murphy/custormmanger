@@ -1,0 +1,47 @@
+<ion-view title="全部客户" class="customer_list">
+
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon icon-white"></button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <a class="button button-icon icon ion-ios-plus-outline icon-white" href="#/app/CustomerMain/addUsr"></a>
+  </ion-nav-buttons>
+
+  <ion-content ng-controller="MyCustomerListCtrl" class="has-header width-300-px">
+    <!-- <div class="row">
+      <div class="col col-80">
+        <div class="list">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" ng-model="MyCustomerListCtrlModule.data.keyWord" placeholder="Search">
+          </label>
+        </div>
+      </div>
+      <div class="col">
+        <a class="button button-icon icon ion-search" ng-click="MyCustomerListCtrlModule.fn.searchUsrFn()"></a>
+      </div>
+    </div> -->
+
+    <div class="list main_list">
+      <div ng-show="!CustomerLists.length" class="searchEmpty">暂无客户</div>
+      <a class="item item-thumbnail-left"
+         ng-repeat="CustomerList in CustomerLists" 
+         href="#/app/CustomerMain/usrDetailJump/{{CustomerList.ID}}">
+         <div class="items_box">
+            <img src="img/spengler.jpg">
+              <h2>{{CustomerList.REAL_NAME | showDefaultData}}</h2>
+              <p>{{CustomerList.HOME_CITY | showDefaultData}}</p>
+              <p>{{CustomerList.MOBILE | showDefaultData}}</p>
+         </div>     
+      </a>
+    </div>
+  </ion-content>
+
+  <!--右侧第二屏view加载盒子-->
+  <ion-nav-view 
+    name="pageRightView" 
+    class="XL-blankpage-style" 
+    animation="slide-left-right" >
+  </ion-nav-view>
+  
+</ion-view>

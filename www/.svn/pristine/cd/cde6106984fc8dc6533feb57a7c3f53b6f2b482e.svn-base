@@ -1,0 +1,732 @@
+<ion-view title="编辑客户">
+  <ion-nav-buttons side="right">
+  	<a class="button button-icon icon ion-checkmark-round" ng-click="editUsrModule.fn.submitDataFn()"></a>
+  </ion-nav-buttons>
+
+  <div style="width:100%;position:absolute;bottom:0px;" class="has-header">
+	<div class="bar">
+		<div class=" button-bar">
+			<button class="button font_black" ng-class="{ 'button\-positive': editUsrModule.attr.tabIndex == 'basicMsg' }" ng-click="editUsrModule.fn.setPlatformFn('basicMsg')">
+				基本信息
+			</button>
+			<button class="button font_black" ng-class="{ 'button\-positive': editUsrModule.attr.tabIndex == 'contact' }" ng-click="editUsrModule.fn.setPlatformFn('contact')">
+				客户地址
+			</button>
+			<button class="button font_black" ng-class="{ 'button\-positive': editUsrModule.attr.tabIndex == 'relationship' }" ng-click="editUsrModule.fn.setPlatformFn('relationship')">
+				家属信息
+			</button>
+		</div>
+	</div>
+	<ion-content padding="false" ng-show="editUsrModule.attr.tabIndex == 'basicMsg'">
+		<!--身份信息-->
+		<div class="card">
+		  <div class="item item-divider">
+		    身份信息
+		  </div>
+
+		  <div class="item item-text-wrap">
+		  	<!--客户姓名-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<label class="item item-input">
+					  <span class="input-label">客户姓名</span>
+					  <input type="text" placeholder="客户姓名">
+					</label>
+				</div>
+				<div class="col col-50">
+					
+				</div>
+		    </div>
+
+		    <!--客户类型-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      客户类型
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--客户来源-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      客户来源
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--客户名族-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      客户名族
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--客户地址-->
+		    <div class="row responsive-sm">
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      省
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      城市
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      地区
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+		    </div>
+
+			<!--详细地址-->
+			<div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">详细地址</span>
+						  <input type="text" placeholder="详细地址">
+						</label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--证件类型-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      证件类型
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--证件号码-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">证件号码</span>
+						  <input type="text" placeholder="证件号码">
+						</label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--出生日期-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">出生日期</span>
+						  <input type="date">
+						</label>
+					</div>
+				</div>
+				<div class="col col-50">
+					
+				</div>
+		    </div>
+
+		    <!--身份有效期-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">身份有效期</span>
+						  <input type="date">
+						</label>
+					</div>
+				</div>
+				<div class="col col-50">
+					
+				</div>
+		    </div>
+
+		  </div>
+		</div>
+		
+		<!--收入信息-->
+		<div class="card">
+		  <div class="item item-divider">
+		    收入信息
+		  </div>
+		  <div class="item item-text-wrap">
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<label class="item item-input">
+					  <span class="input-label">年收入</span>
+					  <input type="text" placeholder="万元">
+					</label>
+				</div>
+				<div class="col col-50"></div>
+		    </div>
+			<div class="row responsive-sm">
+				<div class="col col-20">
+					<div class="list">
+					  <label class="item item-radio">
+					    <input type="radio" name="group">
+					    <div class="item-content">
+					      工薪
+					    </div>
+					    <i class="radio-icon ion-checkmark"></i>
+					  </label>
+					</div>
+				</div>
+				<div class="col col-20">
+					<div class="list">
+					  <label class="item item-radio">
+					    <input type="radio" name="group">
+					    <div class="item-content">
+					      私营
+					    </div>
+					    <i class="radio-icon ion-checkmark"></i>
+					  </label>
+					</div>
+				</div>
+				<div class="col col-20">
+					<div class="list">
+					  <label class="item item-radio">
+					    <input type="radio" name="group">
+					    <div class="item-content">
+					      房屋出租
+					    </div>
+					    <i class="radio-icon ion-checkmark"></i>
+					  </label>
+					</div>
+				</div>
+				<div class="col col-20">
+					<div class="list">
+					  <label class="item item-radio">
+					    <input type="radio" name="group">
+					    <div class="item-content">
+					      其他
+					    </div>
+					    <i class="radio-icon ion-checkmark"></i>
+					  </label>
+					</div>
+				</div>
+			</div>
+		  </div>
+		</div>
+	</ion-content>
+	<ion-content padding="false" ng-show="editUsrModule.attr.tabIndex == 'contact'">
+		<!--现居住地址信息-->
+		<div class="card">
+		  <div class="item item-divider">
+		    现居住地址信息
+		  </div>
+
+		  <div class="item item-text-wrap">
+			<!--客户地址-->
+		    <div class="row responsive-sm">
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      省
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      城市
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      地区
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--详细地址-->
+			<div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">详细地址</span>
+						  <input type="text" placeholder="详细地址">
+						</label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--家庭电话-->
+			<div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">家庭电话</span>
+						  <input type="text" placeholder="家庭电话">
+						</label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--家庭邮编-->
+			<div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">家庭邮编</span>
+						  <input type="text" placeholder="家庭邮编">
+						</label>
+					</div>
+				</div>
+				<div class="col col-25">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+						<input type="checkbox">
+						</label>
+						选为邮寄地址
+					</li>
+				</div>
+		    </div>
+
+		  </div>
+		</div>
+		
+		<!--单位地址信息-->
+		<div class="card">
+		  <div class="item item-divider">
+		    单位地址信息
+		  </div>
+		  <div class="item item-text-wrap">
+
+		    <!--客户地址-->
+		    <div class="row responsive-sm">
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      省
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      城市
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      地区
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--详细地址-->
+			<div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">详细地址</span>
+						  <input type="text" placeholder="详细地址">
+						</label>
+					</div>
+				</div>
+		    </div>
+
+		     <!--单位电话-->
+			<div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">单位电话</span>
+						  <input type="text" placeholder="单位电话">
+						</label>
+					</div>
+				</div>
+		    </div>
+
+		    <!--单位邮编-->
+			<div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+						<label class="item item-input">
+						  <span class="input-label">单位邮编</span>
+						  <input type="text" placeholder="单位邮编">
+						</label>
+					</div>
+				</div>
+				<div class="col col-25">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+						<input type="checkbox">
+						</label>
+						选为邮寄地址
+					</li>
+				</div>
+		    </div>
+		  </div>
+		</div>
+
+		<!--联系电话-->
+		<div class="card">
+		  <div class="item item-divider">
+		    联系电话
+		  </div>
+		  <div class="item item-text-wrap">
+
+		    <!--客户地址-->
+		    <div class="row responsive-sm">
+				<div class="col">
+					<div class="list">
+					  <div class="item item-button-right">
+					    <span>移动电话</span>
+					    <span>13177766666</span>
+					    <a class="button button-icon icon ion-minus-circled"></a>
+					  </div>
+					</div>
+				</div>
+		    </div>
+
+		    <!--添加电话-->
+		    <div class="row responsive-sm ">
+				<div class="col col-50">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      类型
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+				<div class="col col-33">
+					<label class="item item-input">
+					  <input type="text" placeholder="电话号码">
+					</label>
+				</div>
+				<div class="col col-33">
+					<a class="button button-icon icon ion-plus-circled"></a>
+				</div>
+		    </div>
+
+		  </div>
+		</div>
+
+		<!--其他-->
+		<div class="card">
+		  <div class="item item-divider">
+		    其他
+		  </div>
+		  <div class="item item-text-wrap">
+
+		    <div class="row responsive-sm ">
+				<div class="col">
+					<div class="list">
+					  <div class="item item-button-right">
+					    <span>新浪微博</span>
+					    <span>rainbolean@sina.com</span>
+					    <a class="button button-icon icon ion-minus-circled"></a>
+					  </div>
+					</div>
+				</div>
+		    </div>
+
+		    <!--添加方式-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<div class="list">
+					  <label class="item item-input item-select">
+					    <div class="input-label">
+					      类型
+					    </div>
+					    <select>
+					      <option>Blue</option>
+					      <option selected>Green</option>
+					      <option>Red</option>
+					    </select>
+					  </label>
+					</div>
+				</div>
+				<div class="col col-33">
+					<label class="item item-input">
+					  <input type="text">
+					</label>
+				</div>
+				<div class="col col-33">
+					<a class="button button-icon icon ion-plus-circled"></a>
+				</div>
+		    </div>
+
+		  </div>
+		</div>
+
+		<!--联系电话-->
+		<div class="card">
+		  <div class="item item-divider">
+		    备注
+		  </div>
+		  <div class="item item-text-wrap">
+			 <label class="item item-input">
+			    <textarea placeholder="填写备注"></textarea>
+			  </label>
+		  </div>
+		</div>
+	</ion-content>
+	<ion-content padding="false" ng-show="editUsrModule.attr.tabIndex == 'relationship'">
+		<div ng-show="false">
+			<div class="row">
+				<div class="col">
+					<button class="button button-full button-positive">
+					  点击添加家属信息
+					</button>
+				</div>
+			</div>
+		</div>
+		<div ng-show="true">
+
+			<!--家庭关系人-->
+			<div class="list card">
+			  <div class="item item-divider">
+			    <h2 style="display:inline-block;height:47px;margin:0px;line-height:47px;">丈夫</h2>
+			    <a class="button button-icon icon ion-trash-a" style="float:right"></a>
+			    <a class="button button-icon icon ion-edit" style="float:right"></a>
+			  </div>
+
+			  <div class="item item-body noPadding">
+			    <div class="row responsive-sm backgroundGray">
+			    	<div class="col">
+			    		姓名:xxxx
+			    	</div>
+			    </div>
+			    <div class="row responsive-sm">
+			    	<div class="col">
+			    		性别:xxxx
+			    	</div>
+			    </div>
+			    <div class="row responsive-sm backgroundGray">
+			    	<div class="col">
+			    		出生日期:xxxx
+			    	</div>
+			    </div>
+			    <div class="row responsive-sm">
+			    	<div class="col">
+			    		年龄:xxxx
+			    	</div>
+			    </div>
+			  </div>
+			</div>
+			
+			<!--新建关系人-->
+			<div class="list card">
+
+			  <div class="item item-divider">
+			    <h2 style="display:inline-block;height:47px;margin:0px;line-height:47px;">添加家属信息</h2>
+			  </div>
+
+			  <div class="item item-body noPadding">
+			  	<!--客户类型-->
+			    <div class="row responsive-sm backgroundGray">
+			    	<div class="col col-50">
+			    		<div class="list">
+						  <label class="item item-input item-select">
+						    <div class="input-label">
+						      客户类型
+						    </div>
+						    <select>
+						      <option>Blue</option>
+						      <option selected>Green</option>
+						      <option>Red</option>
+						    </select>
+						  </label>
+						</div>
+			    	</div>
+			    	<div class="col col-50">
+			    		<div class="row noPadding">
+			    			<div class="col col-20">
+								<div class="list">
+								  <label class="item item-radio">
+								    <input type="radio" name="group">
+								    <div class="item-content XL_radio_resert">
+								      男
+								    </div>
+								    <i class="radio-icon ion-checkmark"></i>
+								  </label>
+								</div>
+							</div>
+							<div class="col col-20">
+								<div class="list">
+								  <label class="item item-radio">
+								    <input type="radio" name="group">
+								    <div class="item-content XL_radio_resert">
+								      女
+								    </div>
+								    <i class="radio-icon ion-checkmark"></i>
+								  </label>
+								</div>
+							</div>
+			    		</div>
+			    	</div>
+			    </div>
+
+			    <!--姓名-->
+			    <div class="row responsive-sm">
+					<div class="col col-50">
+						<label class="item item-input">
+						  <span class="input-label">客户姓名</span>
+						  <input type="text" placeholder="客户姓名">
+						</label>
+					</div>
+			    </div>
+				
+				<!--出生日期-->
+			    <div class="row responsive-sm">
+					<div class="col col-50">
+						<div class="list">
+							<label class="item item-input">
+							  <span class="input-label">出生日期</span>
+							  <input type="date">
+							</label>
+						</div>
+					</div>
+					<div class="col col-50">
+
+					</div>
+			    </div>
+
+			  </div>
+
+			</div>
+
+			<!--提交按钮-->
+		    <div class="row responsive-sm">
+				<div class="col col-50">
+					<button class="button button-full button-assertive">
+					  取消
+					</button>
+				</div>
+				<div class="col col-50">
+					<button class="button button-full button-positive">
+					  确定
+					</button>
+				</div>
+		    </div>
+
+	    </div>
+	</ion-content>
+</div>
+
+</ion-view>

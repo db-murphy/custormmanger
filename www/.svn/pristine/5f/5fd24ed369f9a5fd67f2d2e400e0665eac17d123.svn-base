@@ -1,0 +1,36 @@
+<ion-view title="全部客户">
+
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <a class="button button-icon icon ion-plus" href="#/app/addUsr"></a>
+  </ion-nav-buttons>
+
+  <ion-content ng-controller="MyCustomerListCtrl" class="has-header">
+    <div class="row">
+      <div class="col col-80">
+        <div class="list">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" ng-model="MyCustomerListCtrlModule.data.keyWord" placeholder="Search">
+          </label>
+        </div>
+      </div>
+      <div class="col">
+        <a class="button button-icon icon ion-search" ng-click="MyCustomerListCtrlModule.fn.searchUsrFn()"></a>
+      </div>
+    </div>
+    <div class="list">
+      <a class="item item-thumbnail-left" 
+         ng-repeat="CustomerList in CustomerLists" 
+         href="#/app/CustomerMain/usrDetailJump/{{CustomerList.ID}}">
+        <img src="img/spengler.jpg">
+        <h2>{{CustomerList.REAL_NAME}}</h2>
+        <p>{{CustomerList.HOME_CITY}}</p>
+        <p>{{CustomerList.MOBILE?CustomerList.MOBILE:'13167313293'}}</p>
+      </a>
+    </div>
+  </ion-content>
+  
+</ion-view>
