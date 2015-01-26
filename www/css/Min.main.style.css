@@ -501,3 +501,14 @@ span.myloading {
 	background: url(../img/edit.png) no-repeat center center;
 	background-size: 18px 18px;
 }
+
+/**
+ * 日历图标
+ */
+.my-calendar{
+	display: inline-block;
+	width: 38px;
+	height: 47px;
+	background: url(../img/calendar.png) no-repeat center center;
+	background-size: 22px 20px;
+}
