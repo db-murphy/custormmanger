@@ -490,3 +490,14 @@ span.myloading {
   from { -webkit-transform: rotate(0deg) translateZ(0); }
   to { -webkit-transform: rotate(360deg) translateZ(0); }
 }
+
+/**
+ * 编辑按钮
+ */
+.my-edit-button{
+	display: inline-block;
+	width: 43px;
+	height: 34px;
+	background: url(../img/edit.png) no-repeat center center;
+	background-size: 18px 18px;
+}
