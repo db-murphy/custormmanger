@@ -831,23 +831,37 @@ AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$sta
 
   //提交内容
   var submitData = function(){
-    if($scope.editUsrModule.attr.basicMsgFormPass && $scope.editUsrModule.attr.addressMsgFormPass){
-      UsrData.editUsrData({
-        ID      : id,
-        data    : $scope.editUsrModule.data,
-        test    : false,
-        add     : false,
-        formName: 'T_CUSTOMER'
-      }, function (SCOPE, data) {
-        //新增客户成功后，添加与他有关系的客户;
-        addCustomRelationCustom(data.ID, function(){
-          //关系客户添加完了，再跳转到主客户的详情界面
-          UsrData.editSeccessFn(data);
-        });
-      });
-    }else{
-      alert('表单验证不通过,查看是否填写正确');
+    var textInput = $('input[type="text"]');
+    for(var i = 0; i < textInput.length; i++){
+      textInput.get(i).blur();
     };
+
+    //延迟校验
+    setTimeout(function(){
+      if($('.normalForm .error-font.my-show').length){
+        CommonFn.ionicAlert('表单验证不通过,查看是否填写正确');
+        return;
+      }else{
+        restoreTheData();
+      };
+    },100);
+  };
+
+  //保存数据
+  function restoreTheData() {
+    UsrData.editUsrData({
+      ID      : id,
+      data    : $scope.editUsrModule.data,
+      test    : false,
+      add     : false,
+      formName: 'T_CUSTOMER'
+    }, function (SCOPE, data) {
+      //新增客户成功后，添加与他有关系的客户;
+      addCustomRelationCustom(data.ID, function(){
+        //关系客户添加完了，再跳转到主客户的详情界面
+        UsrData.editSeccessFn(data);
+      });
+    });
   };
 
   //添加新增客户的关系客户
@@ -910,8 +924,8 @@ AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$sta
   //重置添加关系表单
   function relationResert () {
     $scope.editUsrModule.attr.relationShipDataCache = {
-        relationShipType: null,
-        SEX             : '男',
+        relationShipType: '',
+        SEX             : '',
         BIRTHDAY        : '',
         AGE             : '',
         REAL_NAME       : ''
@@ -920,26 +934,42 @@ AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$sta
 
   //添加一个关系到临时缓存
   function addRelationShip () {
-    if($scope.editUsrModule.attr.relationUsrNamePass){
-      if($('#relationError p').hasClass('ng-hide')){
-        $('#relationError p').removeClass('ng-hide');
-      };
+    if(typeof $scope.editUsrModule.attr.relationShipDataCache.SEX == 'undefined' || $scope.editUsrModule.attr.relationShipDataCache.SEX == ''){
+      CommonFn.showFormError('relationSexErrorMsg', '性别为必选项');
     };
-    if(!$scope.editUsrModule.attr.relationShipDataCache.relationShipType){
-      $scope.editUsrModule.attr.relationTypePass = false;
+
+    if(typeof $scope.editUsrModule.attr.relationShipDataCache.relationShipType == 'undefined' || $scope.editUsrModule.attr.relationShipDataCache.relationShipType == ''){
+      CommonFn.showFormError('relationTypeErrorMsg', '请选择关系');
     };
-    if($scope.editUsrModule.attr.relationUsrNamePass || !$scope.editUsrModule.attr.relationTypePass || !$scope.editUsrModule.attr.relationAgePass){
+
+    if(typeof $scope.editUsrModule.attr.relationShipDataCache.REAL_NAME == 'undefined' || $scope.editUsrModule.attr.relationShipDataCache.REAL_NAME == ''){
+      CommonFn.showFormError('relationUsrNameErrorMsg', '客户姓名未告知，请告知');
+    };
+
+    if($('.addRelationForm .error-font.my-show').length){
+      CommonFn.ionicAlert('表单验证不通过,查看是否填写正确');
       return;
     };
+
     $scope.editUsrModule.attr.newRelationShip.push(angular.copy($scope.editUsrModule.attr.relationShipDataCache));
     $scope.editUsrModule.relationList.push(angular.copy($scope.editUsrModule.attr.relationShipDataCache));
     $ionicScrollDelegate.resize();
     relationResert();
-    setTimeout(function(){
-      $scope.editUsrModule.attr.relationUsrNamePass = true;
-      $('#relationError p').addClass('ng-hide');
-    },50);
   };
+
+  //选择关系触发的事件
+  function selectRelation () {
+    if($scope.editUsrModule.attr.relationShipDataCache.relationShipType){
+      CommonFn.hideFormError('relationTypeErrorMsg');
+    }else{
+      CommonFn.showFormError('relationTypeErrorMsg', '请选择关系');
+    };
+  };
+
+  //性别选择是触发
+  $scope.$watch('editUsrModule.attr.relationShipDataCache.SEX', function(){
+    CommonFn.hideFormError('relationSexErrorMsg');
+  });
 
   //搜索职业
   $ionicModal.fromTemplateUrl('professionalModal.html', {
@@ -1019,17 +1049,19 @@ AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$sta
     $ionicScrollDelegate.resize();
   };
 
-  //选择关系触发的事件
-  function selectRelation () {
-    if($scope.editUsrModule.attr.relationShipDataCache.relationShipType){
-      $scope.editUsrModule.attr.relationTypePass = true;
-    }else{
-      $scope.editUsrModule.attr.relationTypePass = false;
-    };
-  };
-
   function checkTheSearch () {
     $scope.editUsrModule.attr.searchOccupationMacth = !$scope.editUsrModule.attr.searchOccupationMacth;
+  };
+
+  //校验用户名
+  function checkUsrName(str, className) {
+    checkFormHandle.checkUsrName(str, function(json) {
+      if(!json.Falg){
+        CommonFn.showFormError(className, json.msg);
+      }else{
+        CommonFn.hideFormError(className);
+      };
+    });
   };
 
   //验证证件号码
@@ -1150,7 +1182,6 @@ AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$sta
     }else{
       CommonFn.hideFormError(className);
     };
-    
   };
 
   //简单规则校验校验(除证件号码之外,普通输入框里的字符)
@@ -1182,8 +1213,8 @@ AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$sta
       relationAgePass      : true,
       searchOccupationMacth: false,
       relationShipDataCache: {
-        relationShipType: null,
-        SEX             : '男',
+        relationShipType: '',
+        SEX             : '',
         BIRTHDAY        : '',
         AGE             : '',
         REAL_NAME       : ''
@@ -1248,6 +1279,7 @@ AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$sta
       checkTheSearch   : checkTheSearch
     },
     formCheckFn: {
+      checkUsrName: checkUsrName,
       checkPersonId: checkPersonId,
       checkCommon: checkCommon,
       checkAddress: checkAddress

@@ -530,9 +530,8 @@
 
 			</form>
 		</ion-content>
-		<ion-content padding="false" ng-show="editUsrModule.attr.tabIndex == 'contact'">
+		<ion-content padding="false" ng-show="editUsrModule.attr.tabIndex == 'contact'" class="normalForm">
 			<form name="addressMsgForm" novalidate>
-				<i ng-hide="true">{{editUsrModule.attr.addressMsgFormPass = addressMsgForm.$valid}}</i>
 				<!--现居住地址信息-->
 				<div class="card" style="margin-top:0px;">
 				  <div class="item item-divider font-color-red">
@@ -882,7 +881,7 @@
 				  	</div>
 
 				  	<div class="item item-body">
-					  	<form name="relationForm" novalidate>
+					  	<form name="relationForm" class="addRelationForm" novalidate>
 					  		<!--与本人关系-->
 						    <div class="row backgroundGray noPadding item-margin-bottom-15px">
 						    	<div class="col col-50 noPadding">
@@ -899,55 +898,61 @@
 									  </label>
 									</div>
 						    	</div>
-						    	<div class="col col-25 noPadding" style="padding-left:15px;">
-						    		<div class="row">
-						    			<div class="col noPadding">
-											<div class="list" style="margin-right:5px;">
-											  <label class="item item-radio border-none">
-											    <input type="radio" 
-											    	   value="男" 
-											    	   ng-model="editUsrModule.attr.relationShipDataCache.SEX">
-											    <div class="my-item-content border-red-1px">
-											      男
-											    </div>
-											  </label>
-											</div>
-										</div>
-										<div class="col noPadding">
-											<div class="list">
-											  <label class="item item-radio border-none">
-											    <input type="radio"
-											    	   ng-model="editUsrModule.attr.relationShipDataCache.SEX"
-											    	   value="女">
-											    <div class="my-item-content border-red-1px">
-											      女
-											    </div>
-											  </label>
-											</div>
-										</div>
+						    	<div class="col col-25 noPadding">
+						    		<p class="error-font relationTypeErrorMsg"></p>
+						    	</div>
+						    </div>
+
+						    <div class="row noPadding item-margin-bottom-15px">
+						    	<div class="col col-50 noPadding">
+						    		<div class="row noPadding">
+						    			<div class="col col-50 noPadding">
+						    				<div class="row noPadding">
+						    					<div class="col noPadding">
+						    						<div class="list" style="margin-right:5px;">
+													  <label class="item item-radio border-none">
+													    <input type="radio" 
+													    	   value="男" 
+													    	   ng-model="editUsrModule.attr.relationShipDataCache.SEX">
+													    <div class="my-item-content border-red-1px">
+													      男
+													    </div>
+													  </label>
+													</div>
+						    					</div>
+						    					<div class="col noPadding">
+						    						<div class="list">
+													  <label class="item item-radio border-none">
+													    <input type="radio"
+													    	   ng-model="editUsrModule.attr.relationShipDataCache.SEX"
+													    	   value="女">
+													    <div class="my-item-content border-red-1px">
+													      女
+													    </div>
+													  </label>
+													</div>
+						    					</div>
+						    				</div>
+						    			</div>
 						    		</div>
 						    	</div>
-						    	<div class="col col-25 noPadding">
-						    		<p class="error-font" ng-show="!editUsrModule.attr.relationTypePass">请选择关系</p>
+						    	<div class="col col-50 noPadding">
+						    		<p class="error-font relationSexErrorMsg"></p>
 						    	</div>
 						    </div>
 
 						    <!--姓名-->
 						    <div class="row noPadding item-margin-bottom-15px">
 								<div class="col col-50 noPadding">
-									<i ng-hide="true">
-										{{editUsrModule.attr.relationUsrNamePass = relationForm.relationInputName.$invalid}}
-									</i>
 									<label class="item item-input my-item-input">
 									  <input type="text"
-									  		 name="relationInputName"
+									  		 ng-blur="editUsrModule.formCheckFn.checkUsrName(editUsrModule.attr.relationShipDataCache.REAL_NAME, 'relationUsrNameErrorMsg')"
 									  	     ng-model="editUsrModule.attr.relationShipDataCache.REAL_NAME"
-									  	     placeholder="客户姓名"
-									  	     myrequired>
+									  	     placeholder="客户姓名">
 									</label>
 								</div>
-								<div class="col col-50 noPadding" id="relationError">
-						    		<p class="error-font" ng-show="relationForm.relationInputName.$dirty&&relationForm.relationInputName.$invalid">输入姓名</p>
+								<div class="col col-50 noPadding">
+						    		<p class="error-font relationUsrNameErrorMsg">输入姓名</p>
 						    	</div>
 						    </div>
 							
@@ -955,6 +960,7 @@
 						    <birthday
 						    	parent-scope-birthay="editUsrModule.attr.relationShipDataCache.BIRTHDAY" 
 						    	parent-scope-age="editUsrModule.attr.relationShipDataCache.AGE"
+						    	parent-scope-mustneeddata="[]"
 						    	parent-scope-agepass="editUsrModule.attr.relationAgePass">
 						    </birthday>
 					  	</form>
