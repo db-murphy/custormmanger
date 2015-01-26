@@ -54,6 +54,9 @@ MyApp.run(function ($ionicPlatform, $rootScope, $state, $ionicLoading, CommonFn,
   };
 
   function goAddCustomForm () {
+    if($('#addCustom').length){
+      return;
+    };
     CommonFn.showLoading('表单加载中...');
     setTimeout(function(){
       $state.go('app.CustomerMain.addUsr');
