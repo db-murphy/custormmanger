@@ -500,16 +500,19 @@ AppController.controller('addUsrCtrl', ['$scope', '$rootScope', '$stateParams', 
     var searchOccupationKeyWord = $scope.addUsrModule.attr.WORD;
     var searchMatchAll = $scope.addUsrModule.attr.searchOccupationMacth;
 
-    CommonFn.showLoading();
-    searchOccupationServer.searchOccupation({
-      keyWord : searchOccupationKeyWord,
-      ruler   : searchMatchAll,
-      callBack: function(data){
-        CommonFn.hideLoading();
-        $scope.addUsrModule.searchOccupationModel = data;
-        $scope.$apply($scope.addUsrModule.searchOccupationModel);
-      }
-    });
+    CommonFn.showLoading('查询中...');
+
+    $timeout(function(){
+      searchOccupationServer.searchOccupation({
+        keyWord : searchOccupationKeyWord,
+        ruler   : searchMatchAll,
+        callBack: function(data){
+          CommonFn.hideLoading();
+          $scope.addUsrModule.searchOccupationModel = data;
+          $scope.$apply($scope.addUsrModule.searchOccupationModel);
+        }
+      });
+    }, 500);
   };
 
   function checkTheSearch () {
@@ -810,7 +813,7 @@ AppController.controller('addUsrCtrl', ['$scope', '$rootScope', '$stateParams', 
 }]);
 
 //编辑客户
-AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$stateParams', '$ionicScrollDelegate', '$ionicModal', 'UsrData', 'CommonFn', 'searchOccupationServer', 'dataInit', 'relationshipData', 'Variables', 'checkFormHandle', function ($scope, $rootScope, $state, $stateParams, $ionicScrollDelegate, $ionicModal, UsrData, CommonFn, searchOccupationServer, dataInit, relationshipData, Variables, checkFormHandle) {
+AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$stateParams', '$ionicScrollDelegate', '$ionicModal', '$timeout', 'UsrData', 'CommonFn', 'searchOccupationServer', 'dataInit', 'relationshipData', 'Variables', 'checkFormHandle', function ($scope, $rootScope, $state, $stateParams, $ionicScrollDelegate, $ionicModal, $timeout, UsrData, CommonFn, searchOccupationServer, dataInit, relationshipData, Variables, checkFormHandle) {
 
   //tab切换
   var setPlatform = function (indexValue) {
@@ -1007,14 +1010,19 @@ AppController.controller('editUsrCtrl', ['$scope', '$rootScope', '$state', '$sta
     var searchOccupationKeyWord = $scope.editUsrModule.attr.WORD;
     var searchMatchAll = $scope.editUsrModule.attr.searchOccupationMacth;
 
-    searchOccupationServer.searchOccupation({
-      keyWord : searchOccupationKeyWord,
-      ruler   : searchMatchAll,
-      callBack: function(data){
-        $scope.editUsrModule.searchOccupationModel = data;
-        $scope.$apply($scope.editUsrModule.searchOccupationModel);
-      }
-    });
+    CommonFn.showLoading('查询中...');
+
+    $timeout(function(){
+      searchOccupationServer.searchOccupation({
+        keyWord : searchOccupationKeyWord,
+        ruler   : searchMatchAll,
+        callBack: function(data){
+          CommonFn.hideLoading();
+          $scope.editUsrModule.searchOccupationModel = data;
+          $scope.$apply($scope.editUsrModule.searchOccupationModel);
+        }
+      });
+    }, 500);
   };
 
   function chooseOccupation (index) {

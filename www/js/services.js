@@ -590,6 +590,19 @@ AppServices.factory('manuScriptServer', ['Variables', 'CommonFn', 'relationshipD
 AppServices.factory('searchOccupationServer', ['Variables', function (Variables) {
 
 	function searchOccupationFn (opts) {
+
+		if(typeof opts.keyWord == 'undefined' || opts.keyWord == ''){
+			queryAllTableData({
+				"databaseName": Variables.professionalBase,
+		        "tableName": "T_OCCUPATION"
+			},function (CallBackData) {
+				opts.callBack && opts.callBack(CallBackData);
+			},function(){
+				alert('搜索失败');
+			});
+			return;
+		};
+
 		var keyWord = opts.keyWord;
 		var sql = "select * from T_OCCUPATION";
 	    if("" != keyWord){
@@ -605,7 +618,8 @@ AppServices.factory('searchOccupationServer', ['Variables', function (Variables)
 	        "sql": sql+" order by OCCUPATION_CODE asc"
 	    };
 
-		queryTableDataUseSql(json,function(data){ //调用成功
+		queryTableDataUseSql(json,function(data){ 
+			//调用成功
 			opts.callBack && opts.callBack(data);
 		},function(){
 			console.log('查询出错！');
@@ -614,7 +628,7 @@ AppServices.factory('searchOccupationServer', ['Variables', function (Variables)
 
 	return {
 		searchOccupation: function (opts) {
-			return searchOccupationFn(opts);
+			searchOccupationFn(opts);
 		}
 	}
 }]);
