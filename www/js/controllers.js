@@ -68,6 +68,10 @@ AppController.controller('CustomerDetailCtrl', ['$scope', '$stateParams', '$root
 
   //跳转到编辑界面
   function goEditPage () {
+    if(CommonFn.isExist($scope.CustomerDetailModule.data.TYPE) && $scope.CustomerDetailModule.data.TYPE == '01'){
+      CommonFn.ionicAlert('客户类型为客户，则不允许编辑');
+      return;
+    };
     CommonFn.showLoading('表单加载中...');
     setTimeout(function(){
       $state.go('app.CustomerMain.editUsr',{usrListId: id});

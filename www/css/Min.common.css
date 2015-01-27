@@ -94,6 +94,7 @@ p.error-font{
 .my-bar-red{
 	background: #d14014;
 }
+
 .my-content{
 	position: absolute;
 	left: 0px;
@@ -134,6 +135,9 @@ p.error-font{
 }
 .margin-left-6px{
 	margin-left: 6px;
+}
+.margin-left-10px{
+	margin-left: 10px;
 }
 .margin-right-6px{
 	margin-right: 6px;
