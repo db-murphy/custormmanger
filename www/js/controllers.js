@@ -196,10 +196,15 @@ AppController.controller('CustomerDetailCtrl', ['$scope', '$stateParams', '$root
 
     if($scope.CustomerDetailModule.attr.create){
       //创建建议书
+
+      if(!CommonFn.isExist($scope.CustomerDetailModule.data.IDNO) && !CommonFn.isExist($scope.CustomerDetailModule.data.OCCUPATION_CODE_NAME)){
+        CommonFn.ionicAlert('创建建议书时证件号码和职业不能为空');
+        return;
+      };
+
       manuScriptServer.createMsgFn($scope, $scope.CustomerDetailModule.data, function (sendMsg) {
         manuScriptServer.createManuscriptFn(sendMsg);
       });
-      
     }else{
       //选择投保人或者被保人
       if(recommend == '1'){

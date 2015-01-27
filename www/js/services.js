@@ -477,6 +477,14 @@ AppServices.factory('CommonFn', ['$rootScope', '$ionicLoading', '$timeout', '$io
       	$('.'+className).text('');
 	};
 
+	function isExist(value) {
+		if(typeof value == 'undefined' || value == null || value == ''){
+			return false;
+		}else{
+			return true;
+		};
+	};
+
 	return {
 		hideBarFn           : hideBarFn,
 		showBarFn           : showBarFn,
@@ -502,7 +510,8 @@ AppServices.factory('CommonFn', ['$rootScope', '$ionicLoading', '$timeout', '$io
 		showLoading         : showLoading,
 		hideLoading         : hideLoading,
 		showFormError       : showFormError,
-		hideFormError       : hideFormError
+		hideFormError       : hideFormError,
+		isExist             : isExist
 	};
 }]);
 
