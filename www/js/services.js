@@ -13,7 +13,7 @@ AppServices.factory('Variables', ['CommonFn', function (CommonFn) {
         professionalBase  : "t_occupation.sqlite",
         agentCode         : '8611018517',
         agentPassword     : '96E7921895EB72C92A549DD5A330112',
-        mustNeedData      : ['NATIVE_PLACE', 'MARRI_STATUS', 'IDTYPE', 'IDNO', 'ID_END_DATE', 'BIRTHDAY', 'RGT_PROVINCE', 'INCOME', 'INCOME_WAY', 'COMPANY_ADDRESS', 'OCCUPATION_CODE_NAME', 'MOBILE'],
+        mustNeedData      : [],
         translateDataArr  : [
         	{
 	        	codeType: 'nationality',
